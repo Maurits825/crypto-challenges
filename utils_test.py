@@ -16,6 +16,14 @@ class MyTestCase(unittest.TestCase):
         d = get_hamming_distance_str(s1, s2)
         self.assertEqual(37, d)
 
+    def test_pad(self):
+        text = "YELLOW SUBMARINE"
+        b_in = str2bin(text)
+        padded = pad(b_in, 20)
+        expected = "YELLOW SUBMARINE\x04\x04\x04\x04"
+        actual = bin2str(padded)
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

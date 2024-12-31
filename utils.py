@@ -7,6 +7,10 @@ def bin2str(b: bytes) -> str:
     return b.decode(ENCODE_TYPE)
 
 
+def str2bin(s: str) -> bytes:
+    return s.encode(ENCODE_TYPE)
+
+
 def hex2base64(h: str):
     return base64.b64encode(bytes.fromhex(h)).decode(ENCODE_TYPE)
 
@@ -43,3 +47,34 @@ def string_xor_key(s, k_str: str):
         v = ord(c) ^ k
         output.append(chr(v))
     return output
+
+
+PAD_VALUE = 4
+
+
+def pad(b_in: bytes, target_size: int) -> bytes:
+    pad_count = target_size - len(b_in)
+    assert pad_count >= 0  # deal later to cut off then?
+    padded = bytearray([PAD_VALUE for _ in range(target_size)])
+    for i, b in enumerate(b_in):
+        padded[i] = b
+    return padded
+
+
+def xor_bytes(b1: bytes, b2: bytes) -> bytes:
+    size = len(b1)
+    assert size == len(b2)
+    xor_b = bytearray(size)
+    for i in range(size):
+        xor_b[i] = b1[i] ^ b2[i]
+    return bytes(xor_b)
+
+
+def remove_padding(b: bytes) -> bytes:
+    p_count = 0
+    for i in range(len(b) - 1, 0, -1):
+        if b[i] != PAD_VALUE:
+            break
+        p_count += 1
+
+    return b[:-p_count]
