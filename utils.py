@@ -3,6 +3,10 @@ import base64
 ENCODE_TYPE = "utf-8"
 
 
+def bin2str(b: bytes) -> str:
+    return b.decode(ENCODE_TYPE)
+
+
 def hex2base64(h: str):
     return base64.b64encode(bytes.fromhex(h)).decode(ENCODE_TYPE)
 
