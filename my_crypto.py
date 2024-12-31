@@ -6,8 +6,10 @@ from utils import xor_bytes, pad, remove_padding
 
 
 def encrypt_aes_ecb(binary, key) -> bytes:
+    pad_target = math.ceil(len(binary) / 16)
+    binary_pad = pad(binary, 16 * pad_target)
     cipher = AES.new(key, AES.MODE_ECB)
-    encrypted_data = cipher.encrypt(binary)
+    encrypted_data = cipher.encrypt(binary_pad)
     return encrypted_data
 
 

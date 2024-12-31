@@ -1,4 +1,5 @@
 import base64
+import random
 
 ENCODE_TYPE = "utf-8"
 
@@ -78,3 +79,10 @@ def remove_padding(b: bytes) -> bytes:
         p_count += 1
 
     return b[:-p_count]
+
+
+def get_random_bytes(size) -> bytes:
+    r = bytearray(size)
+    for i in range(size):
+        r[i] = int(random.random() * 256)
+    return r
