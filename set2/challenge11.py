@@ -11,14 +11,15 @@ class EncryptMode(Enum):
     CBC = 2
 
 
-def detect_ecb(binary):
-    unique_blocks_percent = []
+def detect_ecb_old(binary):
+    byte_frequencies = []
     byte_size_check = [16]
+    binary_size = len(binary)
     for byte_size in byte_size_check:
-        blocks = math.ceil(len(binary) / byte_size)
-        byte_dict = dict()
-        cummulative_percent = 0
-        for o in range(0, byte_size):
+        blocks = math.ceil(binary_size / byte_size)
+        cumulative_avg_frequency = 0
+        for o in range(0, 16):
+            byte_dict = dict()
             for i in range(blocks):
                 s = o + (i * byte_size)
                 bits = binary[s:s + byte_size]
@@ -31,10 +32,10 @@ def detect_ecb(binary):
                 else:
                     byte_dict[bits_hash] = 1
 
-            byte_dict_len = len(byte_dict)
-            cummulative_percent += byte_dict_len / blocks
-        unique_blocks_percent.append(cummulative_percent / byte_size)
-    avg = sum(unique_blocks_percent) / len(unique_blocks_percent)
+            freqs = [v for v in byte_dict.values()]
+            cumulative_avg_frequency += sum(freqs) / len(freqs)
+        byte_frequencies.append(cumulative_avg_frequency)
+    avg = sum(byte_frequencies) / len(byte_frequencies)
     return avg
 
 
@@ -56,13 +57,20 @@ def encryption_oracle(b_in: bytes) -> (bytes, EncryptMode):
     return encrypted, mode
 
 
+# TODO mostly works, depends on the plain text though
+def detect_ecb(ciphertext, block_size=16):
+    blocks = [ciphertext[i:i + block_size] for i in range(0, len(ciphertext), block_size)]
+    return len(blocks) - len(set(blocks))
+
+
 def run():
     with open("english_text.txt", 'r') as f:
         text = f.read()
-    # text = "YELLOW SUBMARINE" * 100
+    # text = "YELLOW SUBMARINE"[:] * 100
     for i in range(10):
         encrypted, mode = encryption_oracle(str2bin(text))
-        print(mode, detect_ecb(encrypted))
+        score = detect_ecb(encrypted)
+        print(mode, score)
 
 
 def find_encrypt_ecb():
