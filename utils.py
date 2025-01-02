@@ -54,16 +54,28 @@ def string_xor_key(s, k_str: str):
     return output
 
 
-PAD_VALUE = 4
-
-
 def pad(b_in: bytes, target_size: int) -> bytes:
     pad_count = target_size - len(b_in)
     assert pad_count >= 0  # deal later to cut off then?
-    padded = bytearray([PAD_VALUE for _ in range(target_size)])
+    padded = bytearray([pad_count for _ in range(target_size)])
     for i, b in enumerate(b_in):
         padded[i] = b
     return padded
+
+
+def remove_padding(b: bytes) -> bytes:
+    p_count = 0
+    for i in range(len(b) - 1, 0, -1):
+        if b[i] != b[i - 1]:
+            p_count += 1
+            break
+        p_count += 1
+
+    if p_count > 0:
+        if b[-1] != p_count:
+            raise ValueError("Invalid padding")
+
+    return b[:-p_count]
 
 
 def xor_bytes(b1: bytes, b2: bytes) -> bytes:
@@ -73,16 +85,6 @@ def xor_bytes(b1: bytes, b2: bytes) -> bytes:
     for i in range(size):
         xor_b[i] = b1[i] ^ b2[i]
     return bytes(xor_b)
-
-
-def remove_padding(b: bytes) -> bytes:
-    p_count = 0
-    for i in range(len(b) - 1, 0, -1):
-        if b[i] != PAD_VALUE:
-            break
-        p_count += 1
-
-    return b[:-p_count]
 
 
 def get_random_bytes(size) -> bytes:

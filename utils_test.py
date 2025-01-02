@@ -24,6 +24,26 @@ class MyTestCase(unittest.TestCase):
         actual = bin2str(padded)
         self.assertEqual(expected, actual)
 
+        padded = pad(b_in, 19)
+        expected = "YELLOW SUBMARINE\x03\x03\x03"
+        actual = bin2str(padded)
+        self.assertEqual(expected, actual)
+
+    def test_remove_padding(self):
+        text = "ICE ICE BABY\x04\x04\x04\x04"
+        r_text = bin2str(remove_padding(str2bin(text)))
+        expected = "ICE ICE BABY"
+        self.assertEqual(expected, r_text)
+
+        text = "ICE ICE BABY\x05\x05\x05\x05"
+        bin = str2bin(text)
+        try:
+            remove_padding(bin)
+        except ValueError:
+            pass
+        else:
+            self.assertEqual(True, False)
+
 
 if __name__ == '__main__':
     unittest.main()
