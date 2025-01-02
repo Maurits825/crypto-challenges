@@ -1,3 +1,4 @@
 .idea
 /__pycache__
 /set1/__pycache__
+*.pyc
