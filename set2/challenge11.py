@@ -2,7 +2,7 @@ import math
 import random
 from enum import Enum
 
-from my_crypto import encrypt_aes_ecb, encrypt_cbc
+from my_crypto import encrypt_aes_ecb, encrypt_cbc, detect_ecb
 from utils import get_random_bytes, str2bin
 
 
@@ -55,12 +55,6 @@ def encryption_oracle(b_in: bytes) -> (bytes, EncryptMode):
         mode = EncryptMode.CBC
 
     return encrypted, mode
-
-
-# TODO mostly works, depends on the plain text though
-def detect_ecb(ciphertext, block_size=16):
-    blocks = [ciphertext[i:i + block_size] for i in range(0, len(ciphertext), block_size)]
-    return len(blocks) - len(set(blocks))
 
 
 def run():

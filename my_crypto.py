@@ -52,3 +52,9 @@ def decrypt_cbc(binary, iv, key) -> bytes:
 
     plain_text_blocks[-1] = remove_padding(plain_text_blocks[-1])
     return b''.join(plain_text_blocks)
+
+
+# TODO mostly works, depends on the plain text though
+def detect_ecb(ciphertext, block_size=16):
+    blocks = [ciphertext[i:i + block_size] for i in range(0, len(ciphertext), block_size)]
+    return len(blocks) - len(set(blocks))

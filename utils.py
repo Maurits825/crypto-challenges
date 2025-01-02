@@ -8,6 +8,10 @@ def bin2str(b: bytes) -> str:
     return b.decode(ENCODE_TYPE)
 
 
+def base642bin(s: str) -> bytes:
+    return base64.b64decode(s)
+
+
 def str2bin(s: str) -> bytes:
     return s.encode(ENCODE_TYPE)
 
