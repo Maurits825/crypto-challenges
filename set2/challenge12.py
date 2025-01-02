@@ -1,3 +1,5 @@
+import math
+
 from my_crypto import encrypt_aes_ecb, detect_ecb
 from utils import base642bin, get_random_bytes, str2bin
 
@@ -31,25 +33,27 @@ MAX_ASCII = 128
 
 # theres a chance that a char matches and you get partial garbage outputs
 # if we know/assume the plaintext just has 8bit ascii then it should mostly work
-# TODO what about the second block of bytes?
-def find_first_byte(key_size, key):
+# TODO padding at the end?
+def find_first_byte(key_size, key, unknown_byte_size_in):
+    unknown_byte_size = math.ceil(unknown_byte_size_in / key_size) * key_size
     byte_padding = "A"
 
-    matches = [[] for _ in range(key_size)]
-    matches_index = [0] * key_size
+    matches = [[] for _ in range(unknown_byte_size)]
+    matches_index = [0] * unknown_byte_size
     b = 1
-    while b <= key_size:
-        first_block = bytearray([ord(byte_padding) for _ in range(key_size)])
+    while b <= unknown_byte_size:
+        print("Byte:", b, "/", unknown_byte_size)
+        first_block = bytearray([ord(byte_padding) for _ in range(unknown_byte_size)])
         for i in range(b - 1):
-            first_block[key_size - b + i] = matches[i][matches_index[i]]
+            first_block[unknown_byte_size - b + i] = matches[i][matches_index[i]]
         d = encryption_oracle(bytes(first_block[:-b]), key)
-        byte_to_find = d[key_size - 1]
+        byte_to_find = d[unknown_byte_size - 1]
 
         for i in range(0, MAX_ASCII):
             c = (i + 32) % MAX_ASCII  # prio control codes last
             first_block[-1] = c
             d = encryption_oracle(bytes(first_block), key)
-            if d[key_size - 1] == byte_to_find:
+            if d[unknown_byte_size - 1] == byte_to_find:
                 matches[b - 1].append(c)
 
         # print("---".join([chr(m) for m in matches[b - 1]]))
@@ -65,7 +69,7 @@ def find_first_byte(key_size, key):
         else:
             b += 1
 
-    return "".join([chr(matches[i][matches_index[i]]) for i in range(key_size)])
+    return "".join([chr(matches[i][matches_index[i]]) for i in range(unknown_byte_size)])
 
 
 def run():
@@ -80,8 +84,8 @@ def run():
     score = detect_ecb(encrypted)
     print("is ecb:", score, score > 1)
 
-    t = find_first_byte(key_size, key)
-    print("decrypted first byte:", t)
+    t = find_first_byte(key_size, key, len(suffix_bin))
+    print("decrypted:", t)
 
 
 if __name__ == "__main__":
