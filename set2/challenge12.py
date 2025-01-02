@@ -30,7 +30,8 @@ MAX_ASCII = 128
 
 
 # theres a chance that a char matches and you get partial garbage outputs
-# if we know/assume the plaintext just has 8bit ascii then should work
+# if we know/assume the plaintext just has 8bit ascii then it should mostly work
+# TODO what about the second block of bytes?
 def find_first_byte(key_size, key):
     byte_padding = "A"
 

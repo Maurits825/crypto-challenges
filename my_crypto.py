@@ -16,7 +16,7 @@ def encrypt_aes_ecb(binary, key) -> bytes:
 def decrypt_aes_ecb(binary, key) -> bytes:
     cipher = AES.new(key, AES.MODE_ECB)
     decrypted_data = cipher.decrypt(binary)
-    return decrypted_data
+    return remove_padding(decrypted_data)
 
 
 def encrypt_cbc(binary, iv, key) -> bytes:
