@@ -44,11 +44,11 @@ class MyTestCase(unittest.TestCase):
         else:
             self.assertEqual(True, False)
 
-        remove_padding(str2bin("BAR"))
-        remove_padding(str2bin("FOOO"))
+        remove_padding(str2bin("FOOO\x01\x01\x02\x02"))
         remove_padding(str2bin("FOO\x01"))
         remove_padding(str2bin("FOO\x02\x02"))
         remove_padding(str2bin("FOO\x03\x03\x03"))
+        remove_padding(str2bin("FOO" + ("\x10" * 16)))
 
 
 if __name__ == '__main__':

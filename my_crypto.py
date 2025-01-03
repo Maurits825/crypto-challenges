@@ -5,6 +5,7 @@ from Crypto.Cipher import AES
 from utils import xor_bytes, pad, remove_padding
 
 
+# TODO there lots of dupe empty padding...
 def encrypt_aes_ecb(binary, key) -> bytes:
     pad_target = math.ceil(len(binary) / 16)
     binary_pad = pad(binary, 16 * pad_target)
@@ -22,14 +23,16 @@ def decrypt_aes_ecb(binary, key, is_remove_pad=False) -> bytes:
     return decrypted_data
 
 
-def encrypt_cbc(binary, iv, key) -> bytes:
+def encrypt_cbc(binary_in, iv, key) -> bytes:
     block_size = len(iv)
-    cipher_blocks = []
+    pad_target = 1 + math.floor(len(binary_in) / block_size)
+    binary = pad(binary_in, block_size * pad_target)
     total_blocks = math.ceil(len(binary) / block_size)
+
     last_cipher = iv
+    cipher_blocks = []
     for i in range(total_blocks):
         plain_block = binary[i * block_size:(i + 1) * block_size]
-        plain_block = pad(plain_block, block_size)
         block = xor_bytes(last_cipher, plain_block)
 
         cipher = encrypt_aes_ecb(block, key)
