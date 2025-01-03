@@ -60,6 +60,26 @@ def decrypt_cbc(binary, iv, key) -> bytes:
     return b''.join(plain_text_blocks)
 
 
+def create_key_stream(key, nonce, size) -> bytearray:
+    counter = 0
+    key_stream_len = math.ceil(size / 16)
+    key_stream = bytes()
+    for i in range(key_stream_len):
+        d = nonce + counter.to_bytes(8, byteorder="little")
+        e = encrypt_aes_ecb(d, key)
+        key_stream = key_stream + e
+        counter += 1
+
+    key_stream = bytearray(key_stream)
+    return key_stream[:size]
+
+
+def encrypt_ctr(binary, nonce, key) -> bytes:
+    key_stream = create_key_stream(key, nonce, len(binary))
+    cipher = xor_bytes(binary, key_stream)
+    return cipher
+
+
 # TODO mostly works, depends on the plain text though
 def detect_ecb(ciphertext, block_size=16):
     blocks = [ciphertext[i:i + block_size] for i in range(0, len(ciphertext), block_size)]
