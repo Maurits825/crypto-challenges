@@ -65,9 +65,13 @@ def pad(b_in: bytes, target_size: int) -> bytes:
 
 def remove_padding(b: bytes) -> bytes:
     p_count = 0
+    last_byte = b[-1]
+    # todo other keysizes?
+    if last_byte > 16:
+        return b
+
     for i in range(len(b) - 1, 0, -1):
-        if b[i] != b[i - 1]:
-            p_count += 1
+        if b[i] != last_byte:
             break
         p_count += 1
 

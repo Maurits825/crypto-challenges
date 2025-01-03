@@ -13,10 +13,13 @@ def encrypt_aes_ecb(binary, key) -> bytes:
     return encrypted_data
 
 
-def decrypt_aes_ecb(binary, key) -> bytes:
+def decrypt_aes_ecb(binary, key, is_remove_pad=False) -> bytes:
     cipher = AES.new(key, AES.MODE_ECB)
     decrypted_data = cipher.decrypt(binary)
-    return remove_padding(decrypted_data)
+
+    if is_remove_pad:
+        decrypted_data = remove_padding(decrypted_data)
+    return decrypted_data
 
 
 def encrypt_cbc(binary, iv, key) -> bytes:

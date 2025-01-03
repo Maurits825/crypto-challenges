@@ -36,13 +36,19 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(expected, r_text)
 
         text = "ICE ICE BABY\x05\x05\x05\x05"
-        bin = str2bin(text)
+        b = str2bin(text)
         try:
-            remove_padding(bin)
+            remove_padding(b)
         except ValueError:
             pass
         else:
             self.assertEqual(True, False)
+
+        remove_padding(str2bin("BAR"))
+        remove_padding(str2bin("FOOO"))
+        remove_padding(str2bin("FOO\x01"))
+        remove_padding(str2bin("FOO\x02\x02"))
+        remove_padding(str2bin("FOO\x03\x03\x03"))
 
 
 if __name__ == '__main__':
