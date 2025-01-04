@@ -52,6 +52,6 @@ class MTRNG:
         y = x ^ (x >> u)
         y = y ^ ((y << s) & b)
         y = y ^ ((y << t) & c)
-
         z = y ^ (y >> l)
+
         return z
