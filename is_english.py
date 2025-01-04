@@ -1,4 +1,4 @@
-alphabet = 'abcdefghijklmnopqrstuvxyz'
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
 target_frequency = {
     "e": 11.1607,
     "m": 3.0129,
