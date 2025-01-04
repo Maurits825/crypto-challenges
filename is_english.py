@@ -1,4 +1,4 @@
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
+alphabet = 'abcdefghijklmnopqrstuvwxyz '
 target_frequency = {
     "e": 11.1607,
     "m": 3.0129,
@@ -26,14 +26,16 @@ target_frequency = {
     "j": 0.1965,
     "p": 3.1671,
     "q": 0.1962,
+    " ": 20.0,
 }
 
-other_chars = "' "
+other_chars = "',.!?"
 
 
 def is_english(chars) -> float:
     total_chars = len(chars)
     letter_count = 0
+    other_char_count = 0
     letters = dict()
     for c in chars:
         c_lower = c.lower()
@@ -44,7 +46,7 @@ def is_english(chars) -> float:
             else:
                 letters[c_lower] += 1
         elif c_lower in other_chars:
-            letter_count += 1
+            other_char_count += 1
 
     score = 0
     alphabet_f = letter_count / total_chars
@@ -55,9 +57,10 @@ def is_english(chars) -> float:
         letter_percent = (letters[letter] / letter_count) * 100
         diff = abs(letter_percent - target_frequency[letter]) ** 2
         score += diff
-    # print(score)
 
     score = score / (alphabet_f ** 4)
+    # todo do something more here? basically no impact
+    score = score - other_char_count
     return score
 
 

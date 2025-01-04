@@ -1,7 +1,7 @@
 import base64
 import random
 
-ENCODE_TYPE = "utf-8"
+ENCODE_TYPE = "latin-1"
 
 
 def bin2str(b: bytes) -> str:
