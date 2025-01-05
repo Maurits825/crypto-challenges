@@ -1,3 +1,4 @@
+import random
 import time
 
 from mersenne_twister import MTRNG
@@ -43,17 +44,18 @@ def untemper(z):
 
 def run():
     seed = int(time.time())
-    rng = MTRNG(seed)
+    rng = random.Random()
+    rng.seed(seed)
     state_array = []
     for i in range(624):
-        r = rng.get_random()
+        r = int(rng.getrandbits(32))
         x = untemper(r)
         state_array.append(x)
 
     rng_dupe = MTRNG()
     rng_dupe.set_state_array(state_array)
     for i in range(1000):
-        r1 = rng.get_random()
+        r1 = int(rng.getrandbits(32))
         r2 = rng_dupe.get_random()
         print(r1 == r2, r1, r2)
 
