@@ -19,17 +19,6 @@ def temper(x):
     return z
 
 
-def test():
-    y = 0xa1b2c3d4
-    z = y ^ (y >> u)
-
-    y = z & ((2 ** u - 1) << u)
-    y = z ^ (y >> u)
-    y = z ^ (y >> u)
-    y = z ^ (y >> u)
-    print(hex(y))
-
-
 def untemper(z):
     y_upper = z & (0x3ffff << l)
     y = z ^ (y_upper >> l)
@@ -55,11 +44,18 @@ def untemper(z):
 def run():
     seed = int(time.time())
     rng = MTRNG(seed)
+    state_array = []
+    for i in range(624):
+        r = rng.get_random()
+        x = untemper(r)
+        state_array.append(x)
 
-    x = rng.get_random()
-    y = temper(x)
-    x_re = untemper(y)
-    print(x, y, x_re, x == x_re)
+    rng_dupe = MTRNG()
+    rng_dupe.set_state_array(state_array)
+    for i in range(1000):
+        r1 = rng.get_random()
+        r2 = rng_dupe.get_random()
+        print(r1 == r2, r1, r2)
 
 
 if __name__ == "__main__":

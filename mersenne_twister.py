@@ -55,3 +55,6 @@ class MTRNG:
         z = y ^ (y >> l)
 
         return z
+
+    def set_state_array(self, arr):
+        self.state_array = arr
