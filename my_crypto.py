@@ -2,6 +2,7 @@ import math
 
 from Crypto.Cipher import AES
 
+from mersenne_twister import MTRNG
 from utils import xor_bytes, pad, remove_padding
 
 
@@ -74,8 +75,26 @@ def create_key_stream(key, nonce, size) -> bytearray:
     return key_stream[:size]
 
 
+def create_key_stream_prng(seed, size) -> bytearray:
+    rng = MTRNG(seed)
+    key_stream_len = math.ceil(size / 4)
+    key_stream = bytes()
+    for i in range(key_stream_len):
+        k = rng.get_random()
+        key_stream = key_stream + k.to_bytes(4, "big")
+
+    key_stream = bytearray(key_stream)
+    return key_stream[:size]
+
+
 def encrypt_ctr(binary, nonce, key) -> bytes:
     key_stream = create_key_stream(key, nonce, len(binary))
+    cipher = xor_bytes(binary, key_stream)
+    return cipher
+
+
+def encrypt_ctr_prng(binary, key) -> bytes:
+    key_stream = create_key_stream_prng(key, len(binary))
     cipher = xor_bytes(binary, key_stream)
     return cipher
 
