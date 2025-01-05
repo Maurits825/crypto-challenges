@@ -14,5 +14,5 @@ if __name__ == "__main__":
         encrypted_data = f.read()
 
     b = base64.b64decode(encrypted_data)
-    d = decrypt_aes_ecb(b, "YELLOW SUBMARINE".encode('utf-8'))
+    d = decrypt_aes_ecb(b, "yellow submarine".encode('utf-8'))
     print(d)
