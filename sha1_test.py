@@ -13,7 +13,7 @@ class ShA1TestCase(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_sha1_w_hashlib(self):
-        text_b = b"The quick brown fox jumps over the lazy dog"
+        text_b = b"Some text to hash foobar 123!"
         h = sha1_hash(text_b)
         actual = hex(h)
         m = hashlib.sha1(text_b)
