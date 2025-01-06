@@ -1,12 +1,17 @@
 from sha1 import sha1_hash
-from utils import str2bin
 
 
 def run():
-    msg = "foobar text abcd 123 something"
-    msg_bin = str2bin(msg)
-    h = sha1_hash(bytearray(msg_bin))
-    print(h)
+    secret = b"super secret"
+    msg = b"foobar text abcd 123 something"
+    h = sha1_hash(secret + msg)
+    print(hex(h))
+
+    h = sha1_hash(secret + msg + b"more")
+    print(hex(h))
+
+    msg = b"foobar text abcd 124 something"
+    h = sha1_hash(secret + msg)
     print(hex(h))
 
 
