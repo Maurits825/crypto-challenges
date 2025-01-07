@@ -20,6 +20,22 @@ class ShA1TestCase(unittest.TestCase):
         expected = "0x" + m.hexdigest()
         self.assertEqual(expected, actual)
 
+    def test_sha1_large_block(self):
+        text_b = b"ABCDEF" * 100
+        h = sha1_hash(text_b)
+        actual = hex(h)
+        m = hashlib.sha1(text_b)
+        expected = "0x" + m.hexdigest()
+        self.assertEqual(expected, actual)
+
+    def test_sha1_exact_block_size(self):
+        text_b = b"A" * 64
+        h = sha1_hash(text_b)
+        actual = hex(h)
+        m = hashlib.sha1(text_b)
+        expected = "0x" + m.hexdigest()
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
