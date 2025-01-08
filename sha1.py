@@ -25,17 +25,20 @@ def rotate_left(value, bits):
 def sha1_pad(message: bytes) -> bytearray:
     ml = len(message)
     block_count = math.floor(ml / block_size) + 1
+    if block_size - (ml % block_size) <= 8:
+        block_count += 1
     b_size = block_count * block_size
     b = bytearray(b_size)
     b[:ml] = message
     b[ml] = 0x80
-    b[-8:] = (ml * 8).to_bytes(8, "big")
+    b[-8:] = (ml * 8).to_bytes(8, "big")  # Append length to the end of the padded message
+    assert len(b) % block_size == 0
     return b
 
 
 def sha1_hash(message: bytes, registers=Sha1Register()):
     b = sha1_pad(message)
-    block_count = math.ceil(len(message) / block_size)
+    block_count = len(b) // block_size
 
     h0 = registers.h0_start
     h1 = registers.h1_start
