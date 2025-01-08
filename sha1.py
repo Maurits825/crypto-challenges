@@ -36,9 +36,11 @@ def sha1_pad(message: bytes) -> bytearray:
     return b
 
 
-def sha1_hash(message: bytes, registers=Sha1Register()):
-    b = sha1_pad(message)
-    block_count = len(b) // block_size
+def sha1_hash(message: bytes, registers=Sha1Register(), ml_overwrite=None):
+    msg_b = sha1_pad(message)
+    if ml_overwrite:
+        msg_b[-8:] = ml_overwrite.to_bytes(8, "big")
+    block_count = len(msg_b) // block_size
 
     h0 = registers.h0_start
     h1 = registers.h1_start
@@ -46,7 +48,7 @@ def sha1_hash(message: bytes, registers=Sha1Register()):
     h3 = registers.h3_start
     h4 = registers.h4_start
 
-    blocks = [b[i * block_size:(i + 1) * block_size] for i in range(block_count)]
+    blocks = [msg_b[i * block_size:(i + 1) * block_size] for i in range(block_count)]
     for block in blocks:
         w = [
             int.from_bytes(block[i * chunk_size:(i + 1) * chunk_size], "big")
