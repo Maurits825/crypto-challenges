@@ -92,3 +92,7 @@ def get_random_bytes(size) -> bytes:
     for i in range(size):
         r[i] = int(random.random() * 256)
     return r
+
+
+def rotate_left(value, bits):
+    return ((value << bits) | (value >> (32 - bits))) & 0xFFFFFFFF

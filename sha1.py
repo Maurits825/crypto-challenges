@@ -1,6 +1,8 @@
 import math
 from dataclasses import dataclass
 
+from utils import rotate_left
+
 
 @dataclass
 class Sha1Register:
@@ -17,10 +19,6 @@ mask_32_bit = 0xFFFFFFFF
 mask_160_bit = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 
-def rotate_left(value, bits):
-    return ((value << bits) | (value >> (32 - bits))) & mask_32_bit
-
-
 # TODO this padding is wrong when message is exactly the block size
 def sha1_pad(message: bytes) -> bytearray:
     ml = len(message)
@@ -31,7 +29,7 @@ def sha1_pad(message: bytes) -> bytearray:
     b = bytearray(b_size)
     b[:ml] = message
     b[ml] = 0x80
-    b[-8:] = (ml * 8).to_bytes(8, "big")  # Append length to the end of the padded message
+    b[-8:] = (ml * 8).to_bytes(8, "big")
     assert len(b) % block_size == 0
     return b
 

@@ -1,19 +1,20 @@
 import hashlib
 import random
 
-from sha1 import sha1_hash, Sha1Register, sha1_pad
+from md4 import MD4, MD4Register
 from utils import get_random_bytes
 
 key = get_random_bytes(random.randint(5, 50))
 
 
 def get_server_sha(msg):
-    h = hashlib.sha1(key + msg)
-    return int(h.hexdigest(), 16)
+    h = hashlib.new('md4', key + msg)
+    return h.hexdigest()
 
 
 def is_valid_hash(m, h):
-    return get_server_sha(m) == h
+    sh = get_server_sha(m)
+    return sh == h
 
 
 def attack() -> (bytes, int):
@@ -22,23 +23,33 @@ def attack() -> (bytes, int):
     msg_start = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"
     h = get_server_sha(msg_start)
 
-    register = Sha1Register(
-        (h >> 128) & 0xFFFFFFFF,
-        (h >> 96) & 0xFFFFFFFF,
-        (h >> 64) & 0xFFFFFFFF,
-        (h >> 32) & 0xFFFFFFFF,
-        (h >> 0) & 0xFFFFFFFF,
+    r = []
+    packed_hash = bytes.fromhex(h)
+    for i in range(0, len(packed_hash), 4):
+        value = (
+                packed_hash[i] |
+                (packed_hash[i + 1] << 8) |
+                (packed_hash[i + 2] << 16) |
+                (packed_hash[i + 3] << 24)
+        )
+        r.append(value)
+    register = MD4Register(
+        r[0],
+        r[1],
+        r[2],
+        r[3],
     )
+
     m_start_len = len(msg_start)
-    for key_size in range(100):
+    for key_size in range(1, 100):
         ml = m_start_len + key_size
         pad_b = bytes(ml)
-        glue_pad = sha1_pad(pad_b)[ml:]
+        glue_pad = MD4.pad(pad_b, ml * 8)[ml:]
         forged_message = msg_start + glue_pad + forged_text
         ml_overwrite = 8 * (len(forged_message) + key_size)
-        forged_hash = sha1_hash(forged_text, register, ml_overwrite)
+        forged_hash = MD4(forged_text, register, ml_overwrite).hexdigest()
         is_valid = is_valid_hash(forged_message, forged_hash)
-        print("Trying", ml, hex(forged_hash), is_valid)
+        print("Tried", ml, forged_hash, is_valid)
         if is_valid:
             return forged_message, forged_hash
     return None, None
@@ -47,8 +58,8 @@ def attack() -> (bytes, int):
 def run():
     m, h = attack()
     print("\nForged message:", m)
-    print("Forged hash:", hex(h))
-    print("Server hash:", hex(get_server_sha(m)))
+    print("Forged hash:", h)
+    print("Server hash:", get_server_sha(m))
 
 
 if __name__ == "__main__":
