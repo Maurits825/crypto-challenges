@@ -96,3 +96,16 @@ def get_random_bytes(size) -> bytes:
 
 def rotate_left(value, bits):
     return ((value << bits) | (value >> (32 - bits))) & 0xFFFFFFFF
+
+
+def modexp(b, e, m):
+    if m == 1:
+        return 0
+    result = 1
+    b = b % m
+    while e > 0:
+        if e % 2 == 1:
+            result = (result * b) % m
+        e = e >> 1
+        b = (b * b) % m
+    return result

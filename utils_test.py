@@ -50,6 +50,14 @@ class MyTestCase(unittest.TestCase):
         remove_padding(str2bin("FOO\x03\x03\x03"))
         remove_padding(str2bin("FOO" + ("\x10" * 16)))
 
+    def test_modexp(self):
+        m = 150
+        for b in range(100, 150):
+            for e in range(2, 5):
+                actual = modexp(b, e, m)
+                expected = (b ** e) % m
+                self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
