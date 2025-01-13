@@ -110,3 +110,15 @@ def get_dh_coefficient(p, g):
     b = random.randint(0, p - 1)
     B = modexp(g, b, p)
     return b, B
+
+
+def hmac(key: bytes, message: bytes, hash_fn) -> bytes:
+    if len(key) > 64:
+        key = hash_fn(key)
+    if len(key) < 64:
+        key += b'\x00' * (64 - len(key))
+
+    o_key_pad = xor_bytes(b'\x5c' * 64, key)
+    i_key_pad = xor_bytes(b'\x36' * 64, key)
+
+    return hash_fn(o_key_pad + hash_fn(i_key_pad + message))

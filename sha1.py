@@ -34,7 +34,7 @@ def sha1_pad(message: bytes) -> bytearray:
     return b
 
 
-def sha1_hash(message: bytes, registers=Sha1Register(), ml_overwrite=None):
+def sha1_hash(message: bytes, registers=Sha1Register(), ml_overwrite=None) -> int:
     msg_b = sha1_pad(message)
     if ml_overwrite:
         msg_b[-8:] = ml_overwrite.to_bytes(8, "big")
