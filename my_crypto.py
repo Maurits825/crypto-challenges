@@ -1,9 +1,10 @@
 import math
+import random
 
 from Crypto.Cipher import AES
 
 from mersenne_twister import MTRNG
-from utils import xor_bytes, pad, remove_padding
+from utils import xor_bytes, pad, remove_padding, modexp
 
 
 # TODO there lots of dupe empty padding...
@@ -103,3 +104,9 @@ def encrypt_ctr_prng(binary, key) -> bytes:
 def detect_ecb(ciphertext, block_size=16):
     blocks = [ciphertext[i:i + block_size] for i in range(0, len(ciphertext), block_size)]
     return len(blocks) - len(set(blocks))
+
+
+def get_dh_coefficient(p, g):
+    b = random.randint(0, p - 1)
+    B = modexp(g, b, p)
+    return b, B
